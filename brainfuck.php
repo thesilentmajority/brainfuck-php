@@ -35,28 +35,25 @@ class Brainfuck{
         $jump_stack = [];
 
         $code_length = strlen($code);
-        // Todo: Optimize Brainfuck: Combine consecutive ops. Time: O(n), Space: O(1).
         for($i = 0; $i < $code_length; $i++){
             $char = $code[$i];
             $valid_char = 1;
             switch($char){
+                // Optimize Brainfuck: Combine consecutive ops. Time: O(n), Space: O(1).
                 case '>':
-                    $program[] = array(self::OPERATORS['>'], 0);
-                    break;
                 case '<':
-                    $program[] = array(self::OPERATORS['<'], 0);
-                    break;
                 case '+':
-                    $program[] = array(self::OPERATORS['+'], 0);
-                    break;
                 case '-':
-                    $program[] = array(self::OPERATORS['-'], 0);
+                    $char_counter = 1;  // Initialize counter for current char
+                    while ($i + 1 < $code_length && $code[$i + 1] == $char) {
+                        $char_counter++;
+                        $i++;
+                    }
+                    $program[] = array(self::OPERATORS[$char], $char_counter);
                     break;
                 case '.':
-                    $program[] = array(self::OPERATORS['.'], 0);
-                    break;
                 case ',':
-                    $program[] = array(self::OPERATORS[','], 0);
+                    $program[] = array(self::OPERATORS[$char], 0);
                     break;
                 case '[':
                     $program[] = array(self::OPERATORS['['], 0);
@@ -97,19 +94,19 @@ class Brainfuck{
             $instruction = $program[$program_pointer];
             switch($instruction[0]){
                 case self::OPERATORS['>']:
-                    $data_pointer = $data_pointer + 1;
+                    $data_pointer += $instruction[1];
                     if($this->debug){echo "Data pointer: $data_pointer\n";} // Debug
                     break;
                 case self::OPERATORS['<']:
-                    $data_pointer = $data_pointer - 1;
+                    $data_pointer -= $instruction[1];
                     if($this->debug){echo "Data pointer: $data_pointer\n";} // Debug
                     break;
                 case self::OPERATORS['+']:
-                    $data[$data_pointer] = $data[$data_pointer] + 1;
+                    $data[$data_pointer] += $instruction[1];
                     if($this->debug){echo "Data: $data[$data_pointer]\n";} // Debug
                     break;
                 case self::OPERATORS['-']:
-                    $data[$data_pointer] = $data[$data_pointer] - 1;
+                    $data[$data_pointer] -= $instruction[1];
                     if($this->debug){echo "Data: $data[$data_pointer]\n";} // Debug
                     break;
                 case self::OPERATORS['.']:
