@@ -1,6 +1,4 @@
-# brainfuck-php
 
----
 
 # Brainfuck PHP Interpreter
 
